@@ -14,9 +14,13 @@
 <img width="498" height="130" alt="image" src="https://github.com/user-attachments/assets/b2dc8af4-1668-4eee-93e2-6a69c3f694ec" />
 <img width="589" height="547" alt="image" src="https://github.com/user-attachments/assets/8f594825-86b1-46f2-87e7-baa52de545e0" />
 <img width="589" height="543" alt="image" src="https://github.com/user-attachments/assets/785c765f-af37-44de-9e21-f6d28de30eac" />
+
 ## Ejecución del servidor
+
 <img width="589" height="224" alt="image" src="https://github.com/user-attachments/assets/672fc1c6-2832-43ca-bf49-520264dbe903" />
+
 ## Pruebas con Postman
+
 <img width="589" height="358" alt="image" src="https://github.com/user-attachments/assets/93af2b41-b3b2-4635-9029-802ff74112f2" />
 <img width="492" height="427" alt="image" src="https://github.com/user-attachments/assets/5656644c-ec5b-431a-af90-9d84e8929769" />
 <img width="478" height="413" alt="image" src="https://github.com/user-attachments/assets/a3b37f48-a43b-48c0-9ae1-307982b06db6" />
