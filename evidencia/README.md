@@ -1,7 +1,9 @@
 # Evidencia del proyecto
 ## Instalación y configuración
 <img width="677" height="510" alt="image" src="https://github.com/user-attachments/assets/f9f5505f-b1c9-4bde-90f4-bcbcc6498624" />
+
 <img width="742" height="147" alt="image" src="https://github.com/user-attachments/assets/45361fa8-d5c6-4215-9f6c-702551ca1355" />
+
 <img width="645" height="416" alt="image" src="https://github.com/user-attachments/assets/3cdfcb8a-2729-4de1-9c9f-5490b177ff40" />
 
 ## Estructura y código
