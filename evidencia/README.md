@@ -1,4 +1,7 @@
 # Evidencia del proyecto
+
+# Estudiantes: Santiago Palma Rojas, Linda Mena Granados y Stephanie Sánchez Cordero 
+
 ## Instalación y configuración
 <img width="677" height="510" alt="image" src="https://github.com/user-attachments/assets/f9f5505f-b1c9-4bde-90f4-bcbcc6498624" />
 
