@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libro de Facturación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F6F1E4;
+    --paper-line: #DDD3BA;
+    --ink: #22201B;
+    --ink-soft: #6B6255;
+    --ledger-green: #2F4A3C;
+    --ledger-green-deep: #1E3129;
+    --stamp-red: #A23B2E;
+    --gold: #B8863B;
+    --card: #FFFDF7;
+    --shadow: rgba(34,32,27,0.12);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      repeating-linear-gradient(var(--paper-line) 0 1px, transparent 1px 38px),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    padding-bottom:80px;
+  }
+
+  header{
+    padding:56px 24px 32px;
+    max-width:980px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:20px;
+    border-bottom:3px double var(--ink);
+  }
+  .brand-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ledger-green-deep);
+    margin-bottom:8px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:44px;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  #status-stamp{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    border:2px solid var(--stamp-red);
+    color:var(--stamp-red);
+    padding:8px 14px;
+    border-radius:3px;
+    transform:rotate(-3deg);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    opacity:.9;
+  }
+  #status-stamp.ok{ border-color:var(--ledger-green); color:var(--ledger-green); }
+  #status-stamp .dot{ width:7px; height:7px; border-radius:50%; background:currentColor; }
+
+  main{ max-width:980px; margin:0 auto; padding:0 24px; }
+
+  /* New invoice form */
+  .entry-card{
+    background:var(--card);
+    border:1px solid var(--paper-line);
+    box-shadow:0 10px 30px var(--shadow);
+    border-radius:6px;
+    padding:28px;
+    margin-top:36px;
+  }
+  .entry-card h2{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    margin:0 0 20px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .entry-card h2::before{
+    content:'';
+    width:18px;height:18px;
+    background:var(--gold);
+    display:inline-block;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' stroke='black' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 5v14M5 12h14' stroke='black' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+  .form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px 20px;
+  }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field.full{ grid-column:1/-1; }
+  label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  input{
+    font-family:'JetBrains Mono', monospace;
+    font-size:15px;
+    padding:10px 12px;
+    border:1.5px solid var(--paper-line);
+    border-radius:4px;
+    background:#FFFEFA;
+    color:var(--ink);
+    transition:border-color .15s;
+  }
+  input:focus{ outline:none; border-color:var(--ledger-green); }
+  .form-actions{
+    grid-column:1/-1;
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:6px;
+  }
+  button{
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    border:none;
+    border-radius:4px;
+    padding:11px 22px;
+    cursor:pointer;
+    transition:transform .1s, opacity .15s;
+  }
+  button:active{ transform:scale(.97); }
+  .btn-primary{ background:var(--ledger-green); color:#fff; }
+  .btn-primary:hover{ background:var(--ledger-green-deep); }
+  .btn-ghost{ background:transparent; color:var(--ink-soft); border:1.5px solid var(--paper-line); }
+  .btn-ghost:hover{ border-color:var(--ink-soft); color:var(--ink); }
+  #form-error{
+    grid-column:1/-1;
+    color:var(--stamp-red);
+    font-family:'JetBrains Mono', monospace;
+    font-size:12.5px;
+    display:none;
+  }
+
+  /* Ledger table */
+  .ledger-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin:44px 0 14px;
+  }
+  .ledger-head h2{
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    margin:0;
+  }
+  #count-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+
+  .ledger{
+    background:var(--card);
+    border:1px solid var(--paper-line);
+    border-radius:6px;
+    box-shadow:0 10px 30px var(--shadow);
+    overflow:hidden;
+  }
+  .row{
+    display:grid;
+    grid-template-columns:90px 1.3fr 1.6fr 140px 90px;
+    align-items:center;
+    padding:16px 20px;
+    border-bottom:1px solid var(--paper-line);
+    gap:14px;
+  }
+  .row:last-child{ border-bottom:none; }
+  .row.head{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    background:#FBF7EC;
+  }
+  .row.data:hover{ background:#FBF7EC; }
+  .num{
+    font-family:'JetBrains Mono', monospace;
+    font-weight:700;
+    color:var(--gold);
+    font-size:15px;
+  }
+  .cliente{ font-weight:600; }
+  .dir{ color:var(--ink-soft); font-size:13.5px; }
+  .tel{ font-family:'JetBrains Mono', monospace; font-size:13.5px; }
+  .row-actions{ display:flex; gap:8px; justify-content:flex-end; }
+  .icon-btn{
+    width:30px; height:30px;
+    border-radius:4px;
+    border:1.5px solid var(--paper-line);
+    background:transparent;
+    display:flex; align-items:center; justify-content:center;
+    padding:0;
+  }
+  .icon-btn:hover{ border-color:var(--ink); }
+  .icon-btn.danger:hover{ border-color:var(--stamp-red); }
+  .icon-btn svg{ width:14px; height:14px; }
+
+  .empty-state{
+    padding:60px 20px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+  }
+  .empty-state strong{
+    display:block;
+    font-family:'Fraunces', serif;
+    font-size:20px;
+    color:var(--ink);
+    font-weight:600;
+    margin-bottom:6px;
+  }
+
+  #toast{
+    position:fixed;
+    bottom:24px; left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--ink);
+    color:var(--paper);
+    padding:12px 20px;
+    border-radius:5px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s, transform .25s;
+    z-index:10;
+  }
+  #toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media (max-width:700px){
+    .form-grid{ grid-template-columns:1fr; }
+    .row{ grid-template-columns:1fr; row-gap:6px; }
+    .row.head{ display:none; }
+    .row.data{ border-left:3px solid var(--gold); }
+    .row-actions{ justify-content:flex-start; margin-top:6px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="brand-eyebrow">SOF-23/01/PR/2/2026 — Semana 12</div>
+    <h1>Libro de Facturación</h1>
+  </div>
+  <div id="status-stamp"><span class="dot"></span><span id="status-text">Verificando API…</span></div>
+</header>
+
+<main>
+  <section class="entry-card">
+    <h2>Nueva factura</h2>
+    <form id="factura-form" class="form-grid">
+      <div class="field">
+        <label for="numFactura">N.º de factura</label>
+        <input type="number" id="numFactura" placeholder="1001" required>
+      </div>
+      <div class="field">
+        <label for="telCliente">Teléfono</label>
+        <input type="number" id="telCliente" placeholder="88889999">
+      </div>
+      <div class="field full">
+        <label for="nomCliente">Nombre del cliente</label>
+        <input type="text" id="nomCliente" placeholder="Nombre completo">
+      </div>
+      <div class="field full">
+        <label for="dirCliente">Dirección</label>
+        <input type="text" id="dirCliente" placeholder="Dirección del cliente">
+      </div>
+      <div id="form-error"></div>
+      <div class="form-actions">
+        <button type="button" id="cancel-edit" class="btn-ghost" style="display:none;">Cancelar edición</button>
+        <button type="submit" class="btn-primary" id="submit-btn">Registrar factura</button>
+      </div>
+    </form>
+  </section>
+
+  <div class="ledger-head">
+    <h2>Registro</h2>
+    <span id="count-label"></span>
+  </div>
+
+  <div class="ledger">
+    <div class="row head">
+      <span>N.º</span>
+      <span>Cliente</span>
+      <span>Dirección</span>
+      <span>Teléfono</span>
+      <span></span>
+    </div>
+    <div id="ledger-body"></div>
+  </div>
+</main>
+
+<div id="toast"></div>
+
+<script>
+const API_BASE = 'http://localhost:3000/facturas';
+
+const form = document.getElementById('factura-form');
+const ledgerBody = document.getElementById('ledger-body');
+const countLabel = document.getElementById('count-label');
+const statusStamp = document.getElementById('status-stamp');
+const statusText = document.getElementById('status-text');
+const formError = document.getElementById('form-error');
+const submitBtn = document.getElementById('submit-btn');
+const cancelEditBtn = document.getElementById('cancel-edit');
+
+let editingId = null;
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+function showFormError(msg){
+  formError.textContent = msg;
+  formError.style.display = msg ? 'block' : 'none';
+}
+
+async function checkStatus(){
+  try{
+    const res = await fetch(API_BASE + '/');
+    if(!res.ok) throw new Error();
+    statusStamp.classList.add('ok');
+    statusText.textContent = 'API conectada';
+  }catch(e){
+    statusStamp.classList.remove('ok');
+    statusText.textContent = 'Sin conexión — ¿corriste npm start?';
+  }
+}
+
+function renderRow(factura){
+  const row = document.createElement('div');
+  row.className = 'row data';
+  row.innerHTML = `
+    <span class="num">#${factura.numFactura}</span>
+    <span class="cliente">${factura.nomCliente || '—'}</span>
+    <span class="dir">${factura.dirCliente || '—'}</span>
+    <span class="tel">${factura.telCliente || '—'}</span>
+    <span class="row-actions">
+      <button class="icon-btn edit-btn" title="Editar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+      </button>
+      <button class="icon-btn danger delete-btn" title="Eliminar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      </button>
+    </span>
+  `;
+  row.querySelector('.edit-btn').addEventListener('click', () => startEdit(factura));
+  row.querySelector('.delete-btn').addEventListener('click', () => deleteFactura(factura._id, factura.numFactura));
+  return row;
+}
+
+async function loadFacturas(){
+  try{
+    const res = await fetch(API_BASE + '/');
+    const facturas = await res.json();
+    ledgerBody.innerHTML = '';
+
+    if(!Array.isArray(facturas) || facturas.length === 0){
+      ledgerBody.innerHTML = `<div class="empty-state"><strong>El libro está vacío</strong>Registrá tu primera factura arriba.</div>`;
+      countLabel.textContent = '';
+      return;
+    }
+
+    facturas
+      .sort((a,b)=> a.numFactura - b.numFactura)
+      .forEach(f => ledgerBody.appendChild(renderRow(f)));
+
+    countLabel.textContent = `${facturas.length} factura${facturas.length===1?'':'s'} registrada${facturas.length===1?'':'s'}`;
+    statusStamp.classList.add('ok');
+    statusText.textContent = 'API conectada';
+  }catch(err){
+    ledgerBody.innerHTML = `<div class="empty-state"><strong>No se pudo cargar el libro</strong>Revisá que el backend esté corriendo en localhost:3000.</div>`;
+    statusStamp.classList.remove('ok');
+    statusText.textContent = 'Sin conexión — ¿corriste npm start?';
+  }
+}
+
+function startEdit(factura){
+  editingId = factura._id;
+  document.getElementById('numFactura').value = factura.numFactura;
+  document.getElementById('nomCliente').value = factura.nomCliente || '';
+  document.getElementById('dirCliente').value = factura.dirCliente || '';
+  document.getElementById('telCliente').value = factura.telCliente || '';
+  submitBtn.textContent = 'Guardar cambios';
+  cancelEditBtn.style.display = 'inline-block';
+  showFormError('');
+  form.scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function resetForm(){
+  editingId = null;
+  form.reset();
+  submitBtn.textContent = 'Registrar factura';
+  cancelEditBtn.style.display = 'none';
+  showFormError('');
+}
+
+cancelEditBtn.addEventListener('click', resetForm);
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  showFormError('');
+
+  const payload = {
+    numFactura: Number(document.getElementById('numFactura').value),
+    nomCliente: document.getElementById('nomCliente').value.trim(),
+    dirCliente: document.getElementById('dirCliente').value.trim(),
+    telCliente: Number(document.getElementById('telCliente').value) || undefined,
+  };
+
+  if(!payload.numFactura){
+    showFormError('El número de factura es obligatorio.');
+    return;
+  }
+
+  try{
+    let res;
+    if(editingId){
+      res = await fetch(`${API_BASE}/${editingId}`, {
+        method: 'PUT',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+    }else{
+      res = await fetch(`${API_BASE}/`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+    }
+
+    if(!res.ok){
+      const errBody = await res.json().catch(()=>({}));
+      throw new Error(errBody.message || 'El servidor rechazó la solicitud.');
+    }
+
+    showToast(editingId ? 'Factura actualizada' : 'Factura registrada');
+    resetForm();
+    loadFacturas();
+  }catch(err){
+    showFormError(err.message.includes('duplicate') || err.message.includes('E11000')
+      ? 'Ya existe una factura con ese número.'
+      : 'No se pudo guardar. Revisá la conexión con el backend.');
+  }
+});
+
+async function deleteFactura(id, numFactura){
+  if(!confirm(`¿Eliminar la factura #${numFactura}? Esta acción no se puede deshacer.`)) return;
+  try{
+    const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+    if(!res.ok) throw new Error();
+    showToast(`Factura #${numFactura} eliminada`);
+    loadFacturas();
+  }catch(err){
+    showToast('No se pudo eliminar la factura');
+  }
+}
+
+checkStatus();
+loadFacturas();
+</script>
+</body>
+</html>
